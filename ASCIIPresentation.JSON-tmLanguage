@@ -1,0 +1,83 @@
+{
+  "name": "ASCIIPresentation",
+  "scopeName": "source.ascii_presentation",
+  "fileTypes": ["pres"],
+  "patterns": [
+    {
+      "comment": "list items",
+      "match": "([-\\*])\\s+(.+)",
+      "captures": {
+        "1": { "name": "constant.numeric.ascii_presentation" },
+        "2": { "name": "keyword.source.ascii_presentation" }
+      }
+    },{
+      "comment": "links",
+      "match": "https?:\\/\\/.+",
+      "name": "string.ascii_presentation"
+    },{
+      "comment": "headings (between ##)",
+      "name": "title.ascii_presentation",
+      "begin": "^(\\#{2})",
+      "beginCaptures": {
+        "1": { "name": "ascii_presentation.invisible.ascii_presentation" }
+      },
+      "patterns": [
+        { "include": "$self" },
+        {
+          "match": ".",
+          "name": "variable.parameter.function.ascii_presentation"
+        }
+      ],
+      "end": "(\\#{2})$",
+      "endCaptures": {
+        "1": { "name": "ascii_presentation.invisible.ascii_presentation" }
+      }
+    },{
+      "comment": "sub-headings (followed by ##)",
+      "match": "([-\\w\\s]+) (\\#{3})$",
+      "captures": {
+        "1": { "name": "constant.numeric.ascii_presentation" },
+        "2": { "name": "ascii_presentation.invisible.ascii_presentation" }
+      }
+    },{
+      "comment": "terminal hyphens",
+      "match": "-{3,}",
+      "name": "ascii_presentation.chrome.ascii_presentation"
+    },{
+      "comment": "terminal buttons with edges",
+      "match": "(\\|)(o)(o)(o)\\s+(\\|)",
+      "captures": {
+        "1": { "name": "ascii_presentation.chrome.ascii_presentation" },
+        "2": { "name": "ascii_presentation.close.ascii_presentation" },
+        "3": { "name": "ascii_presentation.minimize.ascii_presentation" },
+        "4": { "name": "ascii_presentation.expand.ascii_presentation" },
+        "5": { "name": "ascii_presentation.chrome.ascii_presentation" }
+      }
+    },{
+      "comment": "terminal prompt",
+      "match": "(\\|)(\\$)([-\\.\\>\\w\\d\\s]*)(\\|)",
+      "captures": {
+        "1": { "name": "ascii_presentation.chrome.ascii_presentation" },
+        "2": { "name": "variable.parameter.function.ascii_presentation" },
+        "3": { "name": "string.ascii_presentation" },
+        "4": { "name": "ascii_presentation.chrome.ascii_presentation" }
+      }
+    },{
+      "comment": "terminal hyphens with edges",
+      "match": "(\\|)(-+)(\\|)",
+      "captures": {
+        "1": { "name": "ascii_presentation.chrome.ascii_presentation" },
+        "2": { "name": "ascii_presentation.chrome.ascii_presentation" },
+        "3": { "name": "ascii_presentation.chrome.ascii_presentation" }
+      }
+    },{
+      "comment": "terminal whitespace with edges",
+      "match": "^\\s*(\\|)\\s+(\\|)$",
+      "captures": {
+        "1": { "name": "ascii_presentation.chrome.ascii_presentation" },
+        "2": { "name": "ascii_presentation.chrome.ascii_presentation" }
+      }
+    }
+  ],
+  "uuid": "ab75384c-fe48-4363-bb6e-2385355dea60"
+}
