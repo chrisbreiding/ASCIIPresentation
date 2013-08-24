@@ -2,7 +2,7 @@
 
 Why use Sublime just to create presentations when you can also use it as the presentation tool?
 
-Check out [my presentation on browserify](https://github.com/chrisbreiding/presentations/blob/master/browserify/presentation.pres) as an example. 
+Check out [my presentation on browserify](https://github.com/chrisbreiding/presentations/blob/master/browserify/presentation.pres) as an example.
 
 ![](http://i.imgur.com/wCKIgKvh.jpg)
 
@@ -10,7 +10,7 @@ Check out [my presentation on browserify](https://github.com/chrisbreiding/prese
 
 Currently, this package simply gives you syntax highlighting for:
 
-### headings
+### Headings
 
 ```
 ##
@@ -18,7 +18,7 @@ Heading Here
 ##
 ```
 
-### sub-headings
+### Sub-headings
 
 ```
 Sub-Heading Here ##
@@ -47,7 +47,7 @@ Sub-Heading Here ##
  -----------------------------------
 ```
 
-For the ASCII headings in the [browserify presentation](https://github.com/chrisbreiding/presentations/blob/master/browserify/presentation.pres), I used [http://patorjk.com/software/taag/](http://patorjk.com/software/taag/). 
+For the ASCII headings in the [browserify presentation](https://github.com/chrisbreiding/presentations/blob/master/browserify/presentation.pres), I used [http://patorjk.com/software/taag/](http://patorjk.com/software/taag/).
 
 In the future, I hope to add some functionality to the package so that it can automatically create ASCII headings for you with just a keyboard shortcut.
 
@@ -112,13 +112,13 @@ In the future, I hope to add some functionality to the package so that it can au
         <key>foreground</key>
         <string>#777</string>
       </dict>
-    </dict>    
+    </dict>
   ```
 3 - Update the ascii_presentation.invisible color to match the background of your color scheme. Tweak other colors as desired.
 
 ## Use
 
-Use the syntax enumerated above to create headings, lists, etc. I found putting 20 lines between 1 "slide" and another worked well for separating them if you'll be presenting on a typical 800x600 resolution projector. 
+Use the syntax enumerated above to create headings, lists, etc. I found putting 20 lines between 1 "slide" and another worked well for separating them if you'll be presenting on a typical 800x600 resolution projector.
 
 By default, the syntax highlighting works with files with the extension `pres`.
 
