@@ -21,7 +21,7 @@ Heading Here
 ### Sub-headings
 
 ```
-Sub-Heading Here ##
+Sub-Heading Here ###
 ```
 
 ### Lists
