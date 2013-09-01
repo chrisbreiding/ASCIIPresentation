@@ -1,0 +1,18 @@
+[
+  {
+    "caption": "ASCII Presentation: Add Terminal ASCII",
+    "command": "add_terminal"
+  },
+  {
+    "caption": "ASCII Presentation: Convert Title to ASCII",
+    "command": "convert_title"
+  },
+  {
+    "caption": "ASCII Presentation: Convert Heading to ASCII",
+    "command": "convert_heading"
+  },
+  {
+    "caption": "ASCII Presentation: New Slide",
+    "command": "new_slide"
+  }
+]

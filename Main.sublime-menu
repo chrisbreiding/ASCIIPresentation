@@ -1,0 +1,119 @@
+[
+  {
+    "id": "edit",
+    "children":
+    [
+      {
+        "caption": "ASCII Presentation",
+        "id": "ascii_presentation",
+        "children":
+        [
+          {
+            "caption": "ASCII Presentation: Convert Title to ASCII",
+            "command": "convert_title"
+          },
+          {
+            "caption": "ASCII Presentation: Convert Heading to ASCII",
+            "command": "convert_heading"
+          },
+          {
+            "caption": "ASCII Presentation: Add Terminal ASCII",
+            "command": "add_terminal"
+          },
+          {
+            "caption": "ASCII Presentation: New Slide",
+            "command": "new_slide"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "caption": "Preferences",
+    "mnemonic": "n",
+    "id": "preferences",
+    "children":
+    [
+      {
+        "caption": "Package Settings",
+        "mnemonic": "P",
+        "id": "package-settings",
+        "children":
+        [
+          {
+            "caption": "ASCII Presentation",
+            "children":
+            [
+              {
+                "command": "open_file",
+                "args": {"file": "${packages}/ASCIIPresentation/README.md"},
+                "caption": "README"
+              },
+              { "caption": "-" },
+              {
+                "command": "open_file",
+                "args": {"file": "${packages}/ASCIIPresentation/ASCIIPresentation.sublime-settings"},
+                "caption": "Settings – Default"
+              },
+              {
+                "command": "open_file",
+                "args": {"file": "${packages}/User/ASCIIPresentation.sublime-settings"},
+                "caption": "Settings – User"
+              },
+              { "caption": "-" },
+              {
+                "command": "open_file",
+                "args": {
+                  "file": "${packages}/ASCIIPresentation/Default (OSX).sublime-keymap",
+                  "platform": "OSX"
+                },
+                "caption": "Key Bindings – Default"
+              },
+              {
+                "command": "open_file",
+                "args": {
+                  "file": "${packages}/ASCIIPresentation/Default (Linux).sublime-keymap",
+                  "platform": "Linux"
+                },
+                "caption": "Key Bindings – Default"
+              },
+              {
+                "command": "open_file",
+                "args": {
+                  "file": "${packages}/ASCIIPresentation/Default (Windows).sublime-keymap",
+                  "platform": "Windows"
+                },
+                "caption": "Key Bindings – Default"
+              },
+              {
+                "command": "open_file",
+                "args": {
+                  "file": "${packages}/User/Default (OSX).sublime-keymap",
+                  "platform": "OSX"
+                },
+                "caption": "Key Bindings – User"
+              },
+              {
+                "command": "open_file",
+                "args": {
+                  "file": "${packages}/User/Default (Linux).sublime-keymap",
+                  "platform": "Linux"
+                },
+                "caption": "Key Bindings – User"
+              },
+              {
+                "command": "open_file",
+                "args": {
+                  "file": "${packages}/User/Default (Windows).sublime-keymap",
+                  "platform": "Windows"
+                },
+                "caption": "Key Bindings – User"
+              },
+              { "caption": "-" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
