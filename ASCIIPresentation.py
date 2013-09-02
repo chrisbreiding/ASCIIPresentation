@@ -123,4 +123,11 @@ class AddTerminalCommand(sublime_plugin.TextCommand):
 
 class NewSlideCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        pass
+        settings = sublime.load_settings('ASCIIPresentation.sublime-settings')
+        number_of_lines = settings.get('lines_between_slides')
+        lines = "\n" * number_of_lines
+
+        for region in reversed(self.view.sel()):
+            self.view.replace(edit, region, lines)
+
+        set_cursors_to_ends_of_selections(self.view)

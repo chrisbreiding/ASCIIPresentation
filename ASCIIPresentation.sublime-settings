@@ -2,5 +2,6 @@
   "title_font": "slant",
   "heading_font": "straight",
   "terminal_width": 40,
-  "terminal_height": 5
+  "terminal_height": 5,
+  "lines_between_slides": 20
 }
