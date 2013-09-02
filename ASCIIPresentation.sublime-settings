@@ -1,4 +1,6 @@
 {
   "title_font": "slant",
-  "heading_font": "straight"
+  "heading_font": "straight",
+  "terminal_width": 40,
+  "terminal_height": 5
 }
