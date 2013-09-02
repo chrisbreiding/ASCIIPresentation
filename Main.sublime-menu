@@ -9,19 +9,19 @@
         "children":
         [
           {
-            "caption": "ASCII Presentation: Convert Title to ASCII",
+            "caption": "Convert Title to ASCII",
             "command": "convert_title"
           },
           {
-            "caption": "ASCII Presentation: Convert Heading to ASCII",
+            "caption": "Convert Heading to ASCII",
             "command": "convert_heading"
           },
           {
-            "caption": "ASCII Presentation: Add Terminal ASCII",
+            "caption": "Add Terminal ASCII",
             "command": "add_terminal"
           },
           {
-            "caption": "ASCII Presentation: New Slide",
+            "caption": "New Slide",
             "command": "new_slide"
           }
         ]

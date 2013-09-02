@@ -1,3 +1,6 @@
 [
-
+  { "keys": ["super+ctrl+a", "super+ctrl+t"], "command": "add_terminal" },
+  { "keys": ["super+ctrl+c", "super+ctrl+t"], "command": "convert_title" },
+  { "keys": ["super+ctrl+c", "super+ctrl+h"], "command": "convert_heading" },
+  { "keys": ["super+ctrl+n", "super+ctrl+s"], "command": "new_slide" }
 ]
