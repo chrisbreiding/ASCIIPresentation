@@ -44,6 +44,12 @@ def text_extended_to_line_beginning(view, region):
 
     return text, region
 
+def set_cursors_to_ends_of_selections(view):
+    regions = list(view.sel())
+    view.sel().clear()
+    for region in regions:
+        view.sel().add(sublime.Region(region.end(), region.end()))
+
 def convert_title(view, edit, font_setting):
     for region in reversed(view.sel()):
         if region.empty():
@@ -53,6 +59,8 @@ def convert_title(view, edit, font_setting):
         text, region = text_extended_to_line_beginning(view, region)
         font = sublime.load_settings('ASCIIPresentation.sublime-settings').get(font_setting)
         view.replace(edit, region, heading_text(font, text))
+
+    set_cursors_to_ends_of_selections(view)
 
 
 class ConvertTitleCommand(sublime_plugin.TextCommand):
