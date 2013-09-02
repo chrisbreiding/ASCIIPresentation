@@ -4,14 +4,19 @@ import re
 from pyfiglet import Figlet
 
 
-ws_and_text = re.compile(r"^(\s*)(.*)$")
+REGEX = {
+    "WHITE_SPACE_AND_TEXT" : re.compile(r"^(\s*)(.*)$"),
+    "WHITE_SPACE"          : re.compile(r"\s+"),
+    "NON_WHITE_SPACE"      : re.compile(r"\S+"),
+    "NEW_LINE"             : re.compile(r"\n")
+}
 
 def indent_text(indentation, text):
     lines = map(lambda line: indentation + line, text.split("\n"))
     return "\n".join(lines)
 
 def separate_indentation_from_text(text):
-    match = re.search(ws_and_text, text)
+    match = re.search(REGEX["WHITE_SPACE_AND_TEXT"], text)
     return match.group(1), match.group(2)
 
 def heading_text(font, text):
@@ -25,7 +30,7 @@ def region_extended_back(region):
 def at_beginning_of_line(view, region):
     if region.begin() <= 0:
         return True
-    return re.search("\n", view.substr(region_extended_back(region)))
+    return re.search(REGEX["NEW_LINE"], view.substr(region_extended_back(region)))
 
 def text_extended_to_line_beginning(view, region):
     text = view.substr(region)
@@ -60,10 +65,10 @@ def convert_title(view, edit, font_setting):
 
 def words_before_cursor(view, region):
     text, region = text_extended_to_line_beginning(view, region)
-    return re.search("\S+", text)
+    return re.search(REGEX["NON_WHITE_SPACE"], text)
 
 def white_space_before_cursor(view, region):
-    return not at_beginning_of_line(view, region) and re.search("\s+", view.substr(region_extended_back(region)))
+    return not at_beginning_of_line(view, region) and re.search(REGEX["WHITE_SPACE"], view.substr(region_extended_back(region)))
 
 
 class ConvertTitleCommand(sublime_plugin.TextCommand):
@@ -78,8 +83,9 @@ class ConvertHeadingCommand(sublime_plugin.TextCommand):
 
 class AddTerminalCommand(sublime_plugin.TextCommand):
     def run(self, edit):
+        terminal = self.terminal()
+
         for region in reversed(self.view.sel()):
-            terminal = self.terminal()
             replacement = ""
 
             if region.empty():
@@ -93,8 +99,7 @@ class AddTerminalCommand(sublime_plugin.TextCommand):
                 else:
                     # prepend and indent
                     indentation, region = text_extended_to_line_beginning(self.view, region)
-                    terminal = indent_text(indentation, terminal)
-                    replacement = terminal + text
+                    replacement = indent_text(indentation, terminal) + text
             else:
                 if white_space_before_cursor(self.view, region):
                     # replace and indent
