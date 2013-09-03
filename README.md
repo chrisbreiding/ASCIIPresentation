@@ -42,6 +42,14 @@ Sub-Heading Here ###
 
 ![](screenshots/syntax_list.png)
 
+### Links
+
+```
+http://sublimetext.com
+```
+
+![](screenshots/syntax_links.png)
+
 ### ASCII terminal
 
 ```
