@@ -106,9 +106,15 @@ _Default shortcut_: <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>n</kbd>, <kbd>supe
 
 ## Installation
 
-1 - Clone this repo into your Sublime Text Packages directory.
+**1** - Install the Package
 
-2 - Add the following to your color scheme:
+Install via [Package Control](https://sublime.wbond.net/)
+
+\- or - 
+
+Clone this repo into your Sublime Text Packages directory.
+
+**2** - Add the following to your color scheme:
 
   ```
     <dict>
@@ -167,7 +173,7 @@ _Default shortcut_: <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>n</kbd>, <kbd>supe
       </dict>
     </dict>
   ```
-3 - Update the ascii_presentation.invisible color to match the background of your color scheme. Tweak other colors as desired.
+**3** - Update the ascii_presentation.invisible color to match the background of your color scheme. Tweak other colors as desired.
 
 ## Modification
 
