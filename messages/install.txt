@@ -1,0 +1,7 @@
+Thank you for installing the ASCII Presentation plugin!
+
+For more information, please visit https://github.com/chrisbreiding/ASCIIPresentation.
+
+If you have any questions, comments, or run into any issues, please let me know on Github Issues.
+
+Hope you enjoy the plugin and find it useful!
