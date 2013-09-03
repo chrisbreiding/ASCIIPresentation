@@ -56,7 +56,7 @@
     },{
       "comment": "terminal prompt",
       "match": "(\\|)(\\$)([-\\.\\>\\w\\d\\s]*)(\\|)",
-      "captures": {
+      "captures": {''
         "1": { "name": "ascii_presentation.chrome.ascii_presentation" },
         "2": { "name": "variable.parameter.function.ascii_presentation" },
         "3": { "name": "string.ascii_presentation" },

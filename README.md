@@ -4,11 +4,14 @@ Why use Sublime just to create presentations when you can also use it as the pre
 
 Check out [my presentation on browserify](https://github.com/chrisbreiding/presentations/blob/master/browserify/presentation.pres) as an example.
 
-![](http://i.imgur.com/wCKIgKvh.jpg)
+This package helps you create presentations in a couple ways:
 
-![](http://i.imgur.com/EEhrLk7h.jpg)
+* a syntax utilized to color highlight your presentation
+* a few keyboard shortcuts/commands to help create ASCII art and space out "slides"
 
-Currently, this package simply gives you syntax highlighting for:
+## Syntax
+
+The following syntax is available and will be color highlighted based on your color scheme and the extra colors listed under [Installation](#installation) below. By default, the syntax highlighting works with files with the extension `pres`. The examples in the screenshots use a customized version of the Twilight color scheme.
 
 ### Headings
 
@@ -18,11 +21,15 @@ Heading Here
 ##
 ```
 
+![](screenshots/syntax_heading.png)
+
 ### Sub-headings
 
 ```
 Sub-Heading Here ###
 ```
+
+![](screenshots/syntax_sub-heading.png)
 
 ### Lists
 ```
@@ -33,6 +40,8 @@ Sub-Heading Here ###
 - a final item
 ```
 
+![](screenshots/syntax_list.png)
+
 ### ASCII terminal
 
 ```
@@ -40,16 +49,60 @@ Sub-Heading Here ###
 |ooo                                |
 |-----------------------------------|
 |                                   |
-|$ echo "this looks pretty nice"    |
+|$ npm install -g testem            |
 |                                   |
 |                                   |
 |                                   |
  -----------------------------------
 ```
 
+![](screenshots/syntax_terminal.png)
+
 For the ASCII headings in the [browserify presentation](https://github.com/chrisbreiding/presentations/blob/master/browserify/presentation.pres), I used [http://patorjk.com/software/taag/](http://patorjk.com/software/taag/).
 
 In the future, I hope to add some functionality to the package so that it can automatically create ASCII headings for you with just a keyboard shortcut.
+
+## Keyboard Shortcuts / Commands
+
+The following are available as keyboard shortcuts and commands in the Command Palette as well as under the Edit menu.
+
+### Convert Title to ASCII
+
+Convert the selected text or the word your cursor is on into ASCII art.
+
+The font is configurable in your settings. See [available fonts here](http://www.figlet.org/fontdb.cgi).
+
+_Default shortcut_: <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>c</kbd>, <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>t</kbd>
+
+![](screenshots/ascii_title.png)
+
+### Convert Heading to ASCII
+
+Convert the selected text or the word your cursor is on into ASCII art.
+
+The font is configurable in your settings. See [available fonts here](http://www.figlet.org/fontdb.cgi).
+
+_Default shortcut_: <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>c</kbd>, <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>h</kbd>
+
+![](screenshots/ascii_heading.png)
+
+### Add Terminal ASCII
+
+Add ASCII art that looks like a Terminal/Command Prompt.
+
+The width and height of the Terminal are configurable in your settings.
+
+_Default shortcut_: <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>a</kbd>, <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>t</kbd>
+
+![](screenshots/ascii_terminal.png)
+
+### New Slide
+
+Add a set amount of lines to space out two "slides." The default is 20 lines.
+
+The number of lines is configurable in your settings.
+
+_Default shortcut_: <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>n</kbd>, <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>s</kbd>
 
 ## Installation
 
@@ -116,14 +169,24 @@ In the future, I hope to add some functionality to the package so that it can au
   ```
 3 - Update the ascii_presentation.invisible color to match the background of your color scheme. Tweak other colors as desired.
 
-## Use
-
-Use the syntax enumerated above to create headings, lists, etc. I found putting 20 lines between 1 "slide" and another worked well for separating them if you'll be presenting on a typical 800x600 resolution projector.
-
-By default, the syntax highlighting works with files with the extension `pres`.
-
 ## Modification
 
 If you'd like to hack on the syntax definition, edit the `ASCIIPresentation.JSON-tmLanguage` file. Check out the [syntax definition docs](http://docs.sublimetext.info/en/latest/extensibility/syntaxdefs.html) for more info.
 
 Pull requests are welcome!
+
+## License
+
+Copyright (c) 2013 Chris Breiding
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+See [LICENSE](LICENSE) for full details.
