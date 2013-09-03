@@ -175,6 +175,13 @@ If you'd like to hack on the syntax definition, edit the `ASCIIPresentation.JSON
 
 Pull requests are welcome!
 
+## Credits
+
+The package would not be possible without:
+
+* [pyfiglet](https://github.com/pwaller/pyfiglet), the Python port of [FIGlet](http://www.figlet.org/), which provides the ASCII art font conversion
+* encouragement from the folks at the [Atlanta JavaScript Meetup](http://atlantajavascript.com)
+
 ## License
 
 Copyright (c) 2013 Chris Breiding
