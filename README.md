@@ -66,10 +66,6 @@ http://sublimetext.com
 
 ![](screenshots/syntax_terminal.png)
 
-For the ASCII headings in the [browserify presentation](https://github.com/chrisbreiding/presentations/blob/master/browserify/presentation.pres), I used [http://patorjk.com/software/taag/](http://patorjk.com/software/taag/).
-
-In the future, I hope to add some functionality to the package so that it can automatically create ASCII headings for you with just a keyboard shortcut.
-
 ## Keyboard Shortcuts / Commands
 
 The following are available as keyboard shortcuts and commands in the Command Palette as well as under the Edit menu.
@@ -116,9 +112,9 @@ _Default shortcut_: <kbd>super</kbd> + <kbd>ctrl</kbd> + <kbd>n</kbd>, <kbd>supe
 
 **1** - Install the Package
 
-Install via [Package Control](https://sublime.wbond.net/)
+Install via [Package Control](https://sublime.wbond.net/) (recommended)
 
-\- or - 
+\- or -
 
 Clone this repo into your Sublime Text Packages directory.
 
