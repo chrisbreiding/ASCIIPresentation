@@ -71,9 +71,6 @@ def words_before_cursor(view, region):
 def white_space_before_cursor(view, region):
     return not at_beginning_of_line(view, region) and re.search(REGEX["WHITE_SPACE"], view.substr(region_extended_back(region)))
 
-def is_markdown_file(file_name):
-    return re.search(REGEX['MD_FILE'], file_name)
-
 
 class ConvertTitleCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -147,15 +144,96 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
         if self.window.active_view():
             view = self.window.active_view()
             file_name = view.file_name()
-            if is_markdown_file(file_name):
+            if self.is_markdown_file(file_name):
                 text = view.substr(sublime.Region(0, view.size()))
-
-                # TODO: convert text into ascii presentation
+                md = self.parse(text)
+                text = self.render(md)
 
                 file_name = re.sub(REGEX['MD_FILE'], '.pres', file_name)
                 file = open(file_name, 'w+')
                 file.write(text)
                 file.close()
+                self.window.open_file(file_name)
 
             else:
                 sublime.status_message('Can only convert markdown files (.md or .markdown) into ASCII presentation')
+
+    def is_markdown_file(self, file_name):
+        return re.search(REGEX['MD_FILE'], file_name)
+
+    def parse(self, md):
+        lines = md.split("\n")
+        parsed_md = []
+        md_specs = self.md_specs()
+
+        for line in lines:
+            for md_spec in md_specs:
+                if re.search(md_spec['regex'], line):
+                    parsed_md.append({
+                        'type': md_spec['type'],
+                        'content': md_spec['transform'](line)
+                    })
+                    print md_spec['render']( md_spec['transform'](line) )
+                    break
+
+        return lines
+
+    def render(self, ast):
+        return "rendered presentation"
+
+    def md_specs(self):
+        return [
+            {
+                'type': 'h1',
+                'regex': re.compile(r"^#\s+.+"),
+                'transform': self.transform_heading,
+                'render': self.render_h1
+            },
+            {
+                'type': 'h2',
+                'regex': re.compile(r"^#{2}\s+.+"),
+                'transform': self.transform_heading,
+                'render': self.render_h2
+            },
+            {
+                'type': 'h3',
+                'regex': re.compile(r"^#{3,6}\s+.+"),
+                'transform': self.transform_heading,
+                'render': self.render_h3
+            },
+            {
+                'type': 'uli',
+                'regex': re.compile(r"^[+*-]\s+.+"),
+                'transform': self.transform_li,
+                'render': self.render_unordered_list_item
+            },
+            {
+                'type': 'oli',
+                'regex': re.compile(r"^\d+\.?\s+.+"),
+                'transform': self.transform_li,
+                'render': self.render_ordered_list_item
+            },
+        ]
+
+    def transform_heading(self, heading):
+        return re.sub(re.compile(r"^#+\s+"), '', heading)
+
+    def transform_li(self, list_item):
+        return re.sub(re.compile(r"^(?:[+*-]|\d+)\s+"), '', list_item)
+
+    def render_h1(self, text):
+        font = sublime.load_settings('ASCIIPresentation.sublime-settings').get('title_font')
+        return heading_text(font, text)
+
+    def render_h2(self, text):
+        font = sublime.load_settings('ASCIIPresentation.sublime-settings').get('heading_font')
+        return heading_text(font, text)
+
+    def render_h3(self, text):
+        return text + ' ###'
+
+    def render_unordered_list_item(self, text):
+        return '- ' + text
+
+    def render_ordered_list_item(self, text):
+        return '1 ' + text
