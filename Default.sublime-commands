@@ -1,5 +1,9 @@
 [
   {
+    "caption": "ASCII Presentation: Convert markdown file to ASCII presentation",
+    "command": "ascii_presentation_convert_markdown"
+  },
+  {
     "caption": "ASCII Presentation: Add Terminal ASCII",
     "command": "add_terminal"
   },

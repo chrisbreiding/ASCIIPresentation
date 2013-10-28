@@ -8,7 +8,8 @@ REGEX = {
     "WHITE_SPACE_AND_TEXT" : re.compile(r"^(\s*)(.*)$"),
     "WHITE_SPACE"          : re.compile(r"\s+"),
     "NON_WHITE_SPACE"      : re.compile(r"\S+"),
-    "NEW_LINE"             : re.compile(r"\n")
+    "NEW_LINE"             : re.compile(r"\n"),
+    "MD_FILE"              : re.compile(r"\.(?:md|markdown)$")
 }
 
 def indent_text(indentation, text):
@@ -69,6 +70,9 @@ def words_before_cursor(view, region):
 
 def white_space_before_cursor(view, region):
     return not at_beginning_of_line(view, region) and re.search(REGEX["WHITE_SPACE"], view.substr(region_extended_back(region)))
+
+def is_markdown_file(file_name):
+    return re.search(REGEX['MD_FILE'], file_name)
 
 
 class ConvertTitleCommand(sublime_plugin.TextCommand):
@@ -136,3 +140,22 @@ class NewSlideCommand(sublime_plugin.TextCommand):
             self.view.replace(edit, region, lines)
 
         set_cursors_to_ends_of_selections(self.view)
+
+
+class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        if self.window.active_view():
+            view = self.window.active_view()
+            file_name = view.file_name()
+            if is_markdown_file(file_name):
+                text = view.substr(sublime.Region(0, view.size()))
+
+                # TODO: convert text into ascii presentation
+
+                file_name = re.sub(REGEX['MD_FILE'], '.pres', file_name)
+                file = open(file_name, 'w+')
+                file.write(text)
+                file.close()
+
+            else:
+                sublime.status_message('Can only convert markdown files (.md or .markdown) into ASCII presentation')
