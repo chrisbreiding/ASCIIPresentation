@@ -141,6 +141,9 @@ class NewSlideCommand(sublime_plugin.TextCommand):
 
 class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
     def run(self):
+        self.blocks = self.md_blocks()
+        self.inlines = self.md_inlines()
+
         if self.window.active_view():
             view = self.window.active_view()
             file_name = view.file_name()
@@ -162,64 +165,52 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
         return re.search(REGEX['MD_FILE'], file_name)
 
     def parse(self, md):
-        lines = md.split("\n")
         parsed_md = []
-        md_specs = self.md_specs()
 
-        for line in lines:
-            for md_spec in md_specs:
-                if re.search(md_spec['regex'], line):
-                    parsed_md.append({
-                        'type': md_spec['type'],
-                        'content': md_spec['transform'](line)
-                    })
-                    print md_spec['render']( md_spec['transform'](line) )
-                    break
+        for paragraph in md.split("\n\n"):
+            parsed = self.parse_blocks(paragraph)
+            if parsed:
+                parsed_md.append(parsed)
 
-        return lines
+        return parsed_md
 
     def render(self, ast):
-        return "rendered presentation"
+        rendered_text = ''
+        for tree in ast:
+            rendered_text += tree['type'] + ":\n"
+            rendered_text += ''.join(tree['components']) + "\n\n"
 
-    def md_specs(self):
-        return [
-            {
-                'type': 'h1',
-                'regex': re.compile(r"^#\s+.+"),
-                'transform': self.transform_heading,
-                'render': self.render_h1
-            },
-            {
-                'type': 'h2',
-                'regex': re.compile(r"^#{2}\s+.+"),
-                'transform': self.transform_heading,
-                'render': self.render_h2
-            },
-            {
-                'type': 'h3',
-                'regex': re.compile(r"^#{3,6}\s+.+"),
-                'transform': self.transform_heading,
-                'render': self.render_h3
-            },
-            {
-                'type': 'uli',
-                'regex': re.compile(r"^[+*-]\s+.+"),
-                'transform': self.transform_li,
-                'render': self.render_unordered_list_item
-            },
-            {
-                'type': 'oli',
-                'regex': re.compile(r"^\d+\.?\s+.+"),
-                'transform': self.transform_li,
-                'render': self.render_ordered_list_item
-            },
-        ]
+        return rendered_text
 
-    def transform_heading(self, heading):
+    def parse_blocks(self, text):
+        if self.is_only_whitespace(text):
+            return False
+
+        for block in self.blocks:
+            if re.search(block['regex'], text):
+                return {
+                    'type': block['type'],
+                    'components': block['parse'](text)
+                }
+
+        return {
+            'type': 'p',
+            'components': self.parse_components(text)
+        }
+
+    def parse_components(self, text):
+        # components = []
+
+        # for inline in self.inlines:
+        #     if re.search(inline['regex'], text):
+        #         components.append({
+        #             'type': inline['type'],
+        #             'content': inline['parse'](text)
+        #         })
+        return text
+
+    def parse_heading(self, heading):
         return re.sub(re.compile(r"^#+\s+"), '', heading)
-
-    def transform_li(self, list_item):
-        return re.sub(re.compile(r"^(?:[+*-]|\d+)\s+"), '', list_item)
 
     def render_h1(self, text):
         font = sublime.load_settings('ASCIIPresentation.sublime-settings').get('title_font')
@@ -232,8 +223,83 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
     def render_h3(self, text):
         return text + ' ###'
 
-    def render_unordered_list_item(self, text):
-        return '- ' + text
+    def noop_with_return(self, arg):
+        return arg
 
-    def render_ordered_list_item(self, text):
-        return '1 ' + text
+    def is_only_whitespace(self, text):
+        return not re.search(REGEX["NON_WHITE_SPACE"], text)
+
+    def md_blocks(self):
+        return [
+            {
+                'type': 'h1',
+                'regex': re.compile(r"^#\s+.+"),
+                'parse': self.parse_heading,
+                'render': self.render_h1
+            },
+            {
+                'type': 'h2',
+                'regex': re.compile(r"^#{2}\s+.+"),
+                'parse': self.parse_heading,
+                'render': self.render_h2
+            },
+            {
+                'type': 'h3',
+                'regex': re.compile(r"^#{3,6}\s+.+"),
+                'parse': self.parse_heading,
+                'render': self.render_h3
+            },
+            {
+                'type': 'uli',
+                'regex': re.compile(r"^\s*[+*-]\s+.+"),
+                'parse': self.noop_with_return,
+                'render': self.noop_with_return
+            },
+            {
+                'type': 'oli',
+                'regex': re.compile(r"^\s*\d+\.\s+.+"),
+                'parse': self.noop_with_return,
+                'render': self.noop_with_return
+            },
+            {
+                'type': 'code',
+                'regex': re.compile(r"^\s*```"),
+                'parse': self.noop_with_return,
+                'render': self.noop_with_return
+            },
+            {
+                'type': 'blockquote',
+                'regex': re.compile(r"^\s*\>"),
+                'parse': self.noop_with_return,
+                'render': self.noop_with_return
+            }
+        ]
+
+    def md_inlines(self):
+        return [
+            {
+                'type': 'img',
+                'regex': re.compile(r"\!\[.*\]\(.+\)"),
+                'parse': self.noop_with_return,
+                'render': self.noop_with_return
+            },
+            {
+                'type': 'link',
+                'regex': re.compile(r"\[.+\]\(.+\)"),
+                'parse': self.noop_with_return,
+                'render': self.noop_with_return
+            },
+            {
+                'type': 'em',
+                'regex': re.compile(r"(?P<symbol>[*_])\w+(?P=symbol)"),
+                'parse': self.noop_with_return,
+                'render': self.noop_with_return
+            },
+            {
+                'type': 'strong',
+                'regex': re.compile(r"(?P<symbol>[*_])(?P=symbol)\w+(?P=symbol)(?P=symbol)"),
+                'parse': self.noop_with_return,
+                'render': self.noop_with_return
+            }
+        ]
+
