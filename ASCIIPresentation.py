@@ -195,7 +195,7 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
 
         return {
             'type': 'p',
-            'components': self.parse_components(text)
+            'components': self.parse_paragraph(text)
         }
 
     def parse_components(self, text):
@@ -222,6 +222,21 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
 
     def render_h3(self, text):
         return text + ' ###'
+
+    def parse_uli(self, text):
+        return text
+
+    def parse_oli(self, text):
+        return text
+
+    def parse_code(self, text):
+        return text
+
+    def parse_blockquote(self, text):
+        return text
+
+    def parse_paragraph(self, text):
+        return self.parse_components(text)
 
     def noop_with_return(self, arg):
         return arg
@@ -252,25 +267,25 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
             {
                 'type': 'uli',
                 'regex': re.compile(r"^\s*[+*-]\s+.+"),
-                'parse': self.noop_with_return,
+                'parse': self.parse_uli,
                 'render': self.noop_with_return
             },
             {
                 'type': 'oli',
                 'regex': re.compile(r"^\s*\d+\.\s+.+"),
-                'parse': self.noop_with_return,
+                'parse': self.parse_uli,
                 'render': self.noop_with_return
             },
             {
                 'type': 'code',
                 'regex': re.compile(r"^\s*```"),
-                'parse': self.noop_with_return,
+                'parse': self.parse_code,
                 'render': self.noop_with_return
             },
             {
                 'type': 'blockquote',
                 'regex': re.compile(r"^\s*\>"),
-                'parse': self.noop_with_return,
+                'parse': self.parse_blockquote,
                 'render': self.noop_with_return
             }
         ]
