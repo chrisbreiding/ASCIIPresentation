@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
 import re
+import math
 from pyfiglet import Figlet
 
 
@@ -161,8 +162,7 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
             else:
                 sublime.status_message('Can only convert markdown files (.md or .markdown) into ASCII presentation')
 
-    def is_markdown_file(self, file_name):
-        return re.search(REGEX['MD_FILE'], file_name)
+    # parse
 
     def parse(self, md):
         parsed_md = []
@@ -174,14 +174,6 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
 
         return parsed_md
 
-    def render(self, ast):
-        rendered_text = ''
-        for tree in ast:
-            rendered_text += tree['type'] + ":\n"
-            rendered_text += ''.join(tree['components']) + "\n\n"
-
-        return rendered_text
-
     def parse_blocks(self, text):
         if self.is_only_whitespace(text):
             return False
@@ -190,12 +182,14 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
             if re.search(block['regex'], text):
                 return {
                     'type': block['type'],
-                    'components': block['parse'](text)
+                    'content': block['parse'](text),
+                    'render': block['render']
                 }
 
         return {
             'type': 'p',
-            'components': self.parse_paragraph(text)
+            'content': self.parse_paragraph(text),
+            'render': self.render_noop
         }
 
     def parse_components(self, text):
@@ -210,39 +204,86 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
         return text
 
     def parse_heading(self, heading):
-        return re.sub(re.compile(r"^#+\s+"), '', heading)
-
-    def render_h1(self, text):
-        font = sublime.load_settings('ASCIIPresentation.sublime-settings').get('title_font')
-        return heading_text(font, text)
-
-    def render_h2(self, text):
-        font = sublime.load_settings('ASCIIPresentation.sublime-settings').get('heading_font')
-        return heading_text(font, text)
-
-    def render_h3(self, text):
-        return text + ' ###'
+        return {
+            'indentation': '',
+            'components': [re.sub(re.compile(r"^#+\s+"), '', heading)]
+        }
 
     def parse_uli(self, text):
-        return text
+        return {
+            'indentation': '',
+            'components': [text]
+        }
 
     def parse_oli(self, text):
-        return text
+        return {
+            'indentation': '',
+            'components': [text]
+        }
 
     def parse_code(self, text):
-        return text
+        return {
+            'indentation': '',
+            'components': [text]
+        }
 
     def parse_blockquote(self, text):
-        return text
+        lines = text.split('\n')
+        return {
+            'indentation': self.calculate_indentation(lines[0]),
+            'components': [re.sub(re.compile(r"^\s*>\s*"), '', line) for line in lines]
+        }
 
     def parse_paragraph(self, text):
-        return self.parse_components(text)
+        return {
+            'indentation': '',
+            'components': [self.parse_components(text)]
+        }
 
-    def noop_with_return(self, arg):
-        return arg
+    # render
+
+    def render(self, ast):
+        rendered_text = ''
+        for tree in ast:
+            rendered_text += tree['type'] + ":\n"
+            rendered_text += tree['render'](tree['content']) + "\n\n"
+
+        return rendered_text
+
+    def render_h1(self, content):
+        font = sublime.load_settings('ASCIIPresentation.sublime-settings').get('title_font')
+        return content['components'][0] + ' #' # heading_text(font, content['components'][0])
+
+    def render_h2(self, content):
+        font = sublime.load_settings('ASCIIPresentation.sublime-settings').get('heading_font')
+        return content['components'][0] + ' ##' # heading_text(font, content[0])
+
+    def render_h3(self, content):
+        return content['components'][0] + ' ###'
+
+    def render_blockquote(self, content):
+        rendered_lines = [content['indentation'] + '|  ' + line for line in content['components']]
+        return '\n'.join(rendered_lines)
+
+    # utility
+
+    def is_markdown_file(self, file_name):
+        return re.search(REGEX['MD_FILE'], file_name)
 
     def is_only_whitespace(self, text):
         return not re.search(REGEX["NON_WHITE_SPACE"], text)
+
+    def calculate_indentation(self, text):
+        indentation, text = separate_indentation_from_text(text)
+        return int(math.floor(len(indentation) / 2)) * '  '
+
+    def noop_with_return(self, text):
+        return text
+
+    def render_noop(self, content):
+        return ''.join(content['components'])
+
+    # md
 
     def md_blocks(self):
         return [
@@ -268,25 +309,25 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
                 'type': 'uli',
                 'regex': re.compile(r"^\s*[+*-]\s+.+"),
                 'parse': self.parse_uli,
-                'render': self.noop_with_return
+                'render': self.render_noop
             },
             {
                 'type': 'oli',
                 'regex': re.compile(r"^\s*\d+\.\s+.+"),
                 'parse': self.parse_uli,
-                'render': self.noop_with_return
+                'render': self.render_noop
             },
             {
                 'type': 'code',
                 'regex': re.compile(r"^\s*```"),
                 'parse': self.parse_code,
-                'render': self.noop_with_return
+                'render': self.render_noop
             },
             {
                 'type': 'blockquote',
                 'regex': re.compile(r"^\s*\>"),
                 'parse': self.parse_blockquote,
-                'render': self.noop_with_return
+                'render': self.render_blockquote
             }
         ]
 
@@ -317,4 +358,3 @@ class AsciiPresentationConvertMarkdownCommand(sublime_plugin.WindowCommand):
                 'render': self.noop_with_return
             }
         ]
-

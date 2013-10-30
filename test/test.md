@@ -18,6 +18,13 @@
 1. ordered 2
 1. ordered 3
 
+* list 1
+* list 2
+  - nested 1
+  - nested 2
+  - nested 3
+* list 3
+
 [some link](http://somelink.com)
 
 > a blockquote
@@ -25,8 +32,19 @@
 >
 > - some guy
 
+  > an indented blockquote
+  > Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto, beatae, ducimus fugiat porro reprehenderit commodi deleniti pariatur amet iste adipisci cupiditate doloremque quia culpa nisi fugit quae reiciendis eveniet? Voluptatibus.
+  >
+  > - some guy
+
 ```
-def someFunc():
+function someJSCode() {
+  return 'something';
+}
+```
+
+``` python
+def somePythonCode():
     return 'something'
 ```
 
