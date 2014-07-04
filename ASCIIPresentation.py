@@ -1,7 +1,10 @@
 import sublime
 import sublime_plugin
 import re
-from .pyfiglet import Figlet
+try:
+    from pyfiglet import Figlet # ST2
+except ImportError:
+    from .pyfiglet import Figlet # ST3
 
 
 REGEX = {
