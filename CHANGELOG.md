@@ -1,5 +1,8 @@
 # Changelog for ASCII Presentation
 
+- July 4, 2014 - v0.1.0
+  - Make compatible with Sublime Text 3
+
 - September 2, 2013 - v0.0.2
   - Add shortcuts/commands for:
     - creating ASCII art title, headings, and terminal
