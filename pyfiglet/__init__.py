@@ -4,8 +4,9 @@
 Python FIGlet adaption
 """
 
-import pkg_resources
+from __future__ import print_function
 import re
+import os
 import sys
 from optparse import OptionParser
 
@@ -31,15 +32,18 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 """
 
+BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+FONTS_PATH = os.path.join(BASE_PATH, 'fonts')
+
 DEFAULT_FONT='standard'
 
 
 def figlet_format(text, font=DEFAULT_FONT, **kwargs):
-    fig = Figlet(font)
-    return fig.renderText(text, **kwargs)
+    fig = Figlet(font, **kwargs)
+    return fig.renderText(text)
 
 def print_figlet(text, font=DEFAULT_FONT, **kwargs):
-    print figlet_format(text, font, **kwargs)
+    print(figlet_format(text, font, **kwargs))
 
 
 class FigletError(Exception):
@@ -86,19 +90,24 @@ class FigletFont(object):
         Load font data if exist
         """
         for extension in ('tlf', 'flf'):
-            fn = '%s.%s' % (font, extension)
-            if pkg_resources.resource_exists('pyfiglet.fonts', fn):
-                return pkg_resources.resource_string('pyfiglet.fonts', fn)
+            fn = os.path.join(FONTS_PATH, '%s.%s' % (font, extension))
+            if os.path.exists(fn):
+                data = open(fn, 'rb').read()
+                data = data.decode('ascii', 'replace')
+                return data
         else:
             raise FontNotFound(font)
 
     @classmethod
     def getFonts(cls):
-        return [font.rsplit('.', 2)[0] for font
-                in pkg_resources.resource_listdir('pyfiglet', 'fonts')
-                if font.endswith(('.flf', '.tlf'))
-                   and cls.reMagicNumber.search(pkg_resources.resource_stream(
-                        'pyfiglet.fonts', font).readline())]
+        return [
+            font.rsplit('.', 2)[0] for font
+            in os.listdir(FONTS_PATH)
+            if (font.endswith(('.flf', '.tlf')) and
+                cls.reMagicNumber.search(
+                    open(os.path.join(FONTS_PATH, font), 'rb').readline().decode('ascii', 'replace'))
+            )
+        ]
 
     @classmethod
     def infoFont(cls, font, short=False):
@@ -131,7 +140,7 @@ class FigletFont(object):
 
             header = self.reMagicNumber.sub('', header)
             header = header.split()
-            
+
             if len(header) < 6:
                 raise FontError('malformed header for %s' % self.font)
 
@@ -164,8 +173,11 @@ class FigletFont(object):
             for i in range(0, commentLines):
                 self.comment += data.pop(0)
 
-            # Load characters
-            for i in range(32, 127):
+            def __char(data):
+                """
+                Function loads one character in the internal array from font
+                file content
+                """
                 end = None
                 width = 0
                 chars = []
@@ -179,10 +191,28 @@ class FigletFont(object):
 
                     if len(line) > width: width = len(line)
                     chars.append(line)
+                return width, chars
 
-                if ''.join(chars) != '':
-                    self.chars[i] = chars
+            # Load ASCII standard character set (32 - 127)
+            for i in range(32, 127):
+                width, letter = __char(data)
+                if ''.join(letter) != '':
+                    self.chars[i] = letter
                     self.width[i] = width
+
+            # Load ASCII extended character set
+            while data:
+                line = data.pop(0).strip()
+                i = line.split(' ', 1)[0]
+                if (i == ''):
+                    continue
+                hex_match = re.search('^0x', i, re.IGNORECASE)
+                if hex_match is not None:
+                    i = int(i, 16)
+                    width, letter = __char(data)
+                    if ''.join(letter) != '':
+                        self.chars[i] = letter
+                        self.width[i] = width
 
         except Exception as e:
             raise FontError('problem parsing %s font: %s' % (self.font, e))
@@ -322,11 +352,11 @@ class FigletRenderingEngine(object):
             lineRight = curChar[row]
             if self.base.direction == 'right-to-left':
                 lineLeft, lineRight = lineRight, lineLeft
-            
+
             linebd = len(lineLeft.rstrip()) - 1
             if linebd < 0:
                 linebd = 0
-                
+
             if linebd < len(lineLeft):
                 ch1 = lineLeft[linebd]
             else:
@@ -360,7 +390,7 @@ class FigletRenderingEngine(object):
         buffer = ['' for i in range(self.base.Font.height)]
 
         for c in map(ord, list(text)):
-            if self.base.Font.chars.has_key(c) is False: continue
+            if not c in self.base.Font.chars: continue
             curChar = self.base.Font.chars[c]
             self.curCharWidth = self.base.Font.width[c]
             maxSmush = self.smushAmount(buffer=buffer, curChar=curChar)
@@ -428,9 +458,9 @@ class Figlet(object):
         self.engine = FigletRenderingEngine(base=self)
 
     def setFont(self, **kwargs):
-        if kwargs.has_key('font'):
+        if 'font' in kwargs:
             self.font = kwargs['font']
-        
+
         self.Font = FigletFont(font=self.font)
 
     def getDirection(self):
@@ -485,11 +515,11 @@ def main():
     opts, args = parser.parse_args()
 
     if opts.list_fonts:
-        print FigletFont.getFonts()
+        print(FigletFont.getFonts())
         exit(0)
 
     if opts.info_font:
-        print FigletFont.infoFont(opts.font)
+        print(FigletFont.infoFont(opts.font))
         exit(0)
 
     if len(args) == 0:
@@ -506,7 +536,7 @@ def main():
     r = f.renderText(text)
     if opts.reverse is True: r = r.reverse()
     if opts.flip is True: r = r.flip()
-    print r
+    print(r)
 
     return 0
 
