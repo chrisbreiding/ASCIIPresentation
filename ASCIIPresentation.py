@@ -2,9 +2,9 @@ import sublime
 import sublime_plugin
 import re
 try:
-    import pyfiglet # ST2
+    from lib.pyfiglet import figlet_format # ST2
 except ImportError:
-    from . import pyfiglet # ST3
+    from .lib.pyfiglet import figlet_format # ST3
 
 
 REGEX = {
@@ -24,7 +24,7 @@ def separate_indentation_from_text(text):
 
 def heading_text(font, text):
     indentation, text = separate_indentation_from_text(text)
-    ascii_text = indent_text(indentation, pyfiglet.Figlet(font=font).renderText(text))
+    ascii_text = indent_text(indentation, figlet_format(text, font))
     return "##\n%s\n##\n" % ascii_text
 
 def region_extended_back(region):

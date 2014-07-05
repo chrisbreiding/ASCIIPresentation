@@ -9,7 +9,10 @@ import re
 import os
 import sys
 from optparse import OptionParser
-import sublime
+try:
+    from package_resources import get_resource # ST2
+except ImportError:
+    from .package_resources import get_resource # ST3
 
 __version__ = '0.6.1dev'
 __author__ = 'Peter Waller <peter.waller@gmail.com>'
@@ -34,9 +37,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 """
 
 DEFAULT_FONT='standard'
-
-def fonts_path():
-    return sublime.packages_path() + "/ASCIIPresentation/pyfiglet/fonts/"
 
 def figlet_format(text, font=DEFAULT_FONT, **kwargs):
     fig = Figlet(font, **kwargs)
@@ -89,25 +89,8 @@ class FigletFont(object):
         """
         Load font data if exist
         """
-        for extension in ('tlf', 'flf'):
-            fn = os.path.join(fonts_path(), '%s.%s' % (font, extension))
-            if os.path.exists(fn):
-                data = open(fn, 'rb').read()
-                data = data.decode('ascii', 'replace')
-                return data
-        else:
-            raise FontNotFound(font)
-
-    @classmethod
-    def getFonts(cls):
-        return [
-            font.rsplit('.', 2)[0] for font
-            in os.listdir(fonts_path())
-            if (font.endswith(('.flf', '.tlf')) and
-                cls.reMagicNumber.search(
-                    open(os.path.join(fonts_path(), font), 'rb').readline().decode('ascii', 'replace'))
-            )
-        ]
+        font_path = os.path.join('lib', 'fonts', '%s.flf' % font)
+        return get_resource('ASCIIPresentation', font_path, 'ascii')
 
     @classmethod
     def infoFont(cls, font, short=False):
@@ -494,9 +477,6 @@ class Figlet(object):
         # wrapper method to engine
         return self.engine.render(text)
 
-    def getFonts(self):
-        return self.Font.getFonts()
-
 
 def main():
     parser = OptionParser(version=__version__, usage='%prog [options] [text..]')
@@ -510,13 +490,8 @@ def main():
             help='set terminal width for wrapping/justification (default: %default)' )
     parser.add_option('-r', '--reverse', action='store_true', default=False, help='shows mirror image of output text')
     parser.add_option('-F', '--flip', action='store_true', default=False, help='flips rendered output text over')
-    parser.add_option('-l', '--list_fonts', action='store_true', default=False, help='show installed fonts list')
     parser.add_option('-i', '--info_font', action='store_true', default=False, help='show font\'s information, use with -f FONT')
     opts, args = parser.parse_args()
-
-    if opts.list_fonts:
-        print(FigletFont.getFonts())
-        exit(0)
 
     if opts.info_font:
         print(FigletFont.infoFont(opts.font))
