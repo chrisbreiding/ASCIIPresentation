@@ -90,7 +90,10 @@ class FigletFont(object):
         Load font data if exist
         """
         font_path = os.path.join('lib', 'fonts', '%s.flf' % font)
-        return get_resource('ASCIIPresentation', font_path, 'ascii')
+        data = get_resource('ASCII Presentation', font_path, 'ascii')
+        if data is None:
+            raise FontNotFound(font)
+        return data
 
     @classmethod
     def infoFont(cls, font, short=False):
